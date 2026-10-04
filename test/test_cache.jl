@@ -141,6 +141,7 @@ end
         @test CutCellMethods.volume_fractions(cache) === cache.cells.volume_fraction
         @test CutCellMethods.face_fractions(cache) === cache.cells.face_fraction
         @test CutCellMethods.kinds(cache) === cache.cells.kind
+        @test CutCellMethods.face_centroids_local(cache) === cache.cells.face_centroid_local
 
         # The contour off the stored corners: one segment per cut leaf.
         @test !any(cache.cells.ambiguous)
@@ -257,7 +258,9 @@ end
             @test CutCellMethods.face_fractions(c) === c.cells.face_fraction
             @test CutCellMethods.volume_fractions(c) === c.cells.volume_fraction
             @test CutCellMethods.kinds(c) === c.cells.kind
+            @test CutCellMethods.face_centroids_local(c) === c.cells.face_centroid_local
         end
+        @test all(f -> all(x -> all(isnan, x), f), CutCellMethods.face_centroids_local(pl)) # PLIC has none to report
         # The polyline clipper takes a line mesh, as an `SDFMesh`, rather than a field: a 64-gon of
         # the same circle.
         circ = [CACHE_CIRCLE.center + CACHE_CIRCLE.radius * SVector(cos(2π * k / 64), sin(2π * k / 64))
@@ -267,6 +270,7 @@ end
         @test CutCellMethods.face_fractions(pc) === pc.cells.face_fraction
         @test CutCellMethods.volume_fractions(pc) === pc.cells.volume_fraction
         @test CutCellMethods.kinds(pc) === pc.cells.kind
+        @test CutCellMethods.face_centroids_local(pc) === pc.cells.face_centroid_local
         @test count(==(CELL_CUT), pc.cells.kind) > 100
         @test shared_face_mismatches(pc.cells.face_fraction) == 0
 

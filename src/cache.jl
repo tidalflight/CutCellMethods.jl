@@ -59,6 +59,9 @@ same way. Each is sized `grid.n`:
 - `volume_fractions` -- each cell's **fluid** fraction.
 - `kinds` -- `CELL_INSIDE` / `CELL_OUTSIDE` / `CELL_CUT`.
 
+A fourth reader, [`face_centroids_local`](@ref), returns the open faces' centroids. Its value
+depends on the method; see its docstring.
+
 These return the cache's own storage, not copies, so writing through them edits the cache -- which
 is how a consumer post-processes in place (snapping slivers to dry, say). A cell edited that way no
 longer agrees with the rest of its stored struct. `@inline` and allocation-free, so they are legal
@@ -80,6 +83,26 @@ Each cell's `CELL_INSIDE` / `CELL_OUTSIDE` / `CELL_CUT`, as the cache stores it.
 [`face_fractions`](@ref).
 """
 @inline kinds(cache::AbstractCutCellCache) = cache.cells.kind
+
+"""
+    face_centroids_local(cache) -> AbstractArray{SVector{2D,SVector{D-1,T}}}
+
+Each cell's open-face centroids, as the cache stores them. Per direction, the centroid of the face's
+open part is stored as `D-1` offsets from the cell's lower lattice corner along the face's in-plane
+axes, in increasing axis order; see [`CutCellData`](@ref). [`face_centroid`](@ref) turns one into a
+point. See [`face_fractions`](@ref).
+
+With the fractions and the fluid fraction, these give a cell's wall moments by the divergence
+theorem, whatever shape the wall takes in the cell. A consumer that needs `∫ x dA` over the wall
+needs no interface data.
+
+Unlike the other three readers, what this holds depends on the method:
+- PLIC holds `NaN`, since a centroid plane fit has no centroids to report;
+- a closed face's entry is a placeholder, so read one only where its fraction is nonzero.
+
+A consumer that edits the fractions in place (snapping slivers to dry, say) leaves these stale.
+"""
+@inline face_centroids_local(cache::AbstractCutCellCache) = cache.cells.face_centroid_local
 
 """
     is_cell_open(cache, ci) -> Bool

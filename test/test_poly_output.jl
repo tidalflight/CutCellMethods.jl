@@ -80,6 +80,7 @@ po_shoelace(p) =sum(i -> (p[i][1] * p[mod1(i + 1, length(p))][2] - p[i][2] * p[m
         @test CutCellMethods.face_fractions(view) == c.cells.face_fraction
         @test CutCellMethods.volume_fractions(view) == c.cells.volume_fraction
         @test CutCellMethods.kinds(view) == c.cells.kind
+        @test CutCellMethods.face_centroids_local(view) == c.cells.face_centroid_local
         @test view.info.status == c.info.status
         @test KernelAbstractions.get_backend(view) isa KernelAbstractions.CPU
         # and on the CPU a kernel takes the cache as it is

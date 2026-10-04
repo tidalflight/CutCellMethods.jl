@@ -1,6 +1,6 @@
 name = "CutCellMethods"
 uuid = "844582fc-e8cc-4c04-acf7-8b8ea17ba2c5"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Mark Lau <mark@tidalflight.com>"]
 
 [deps]

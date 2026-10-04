@@ -65,6 +65,7 @@ Only the method tags, `CutCellData`, `allocate_cache`/`update_cache!` and `gener
 | call | meaning |
 |---|---|
 | `CutCellMethods.face_fractions(cache)`, `volume_fractions`, `kinds` | the three fields every cache holds, as its own storage |
+| `CutCellMethods.face_centroids_local(cache)` | each cell's open-face centroids (in-plane offsets), as its own storage; `NaN` under PLIC |
 | `CutCellMethods.face_area_of(cell, dir, cellsize)` | open measure, raw units (length in 2D, area in 3D) |
 | `CutCellMethods.full_face_area(cellsize, dir)` | a fully open face's measure, the scale a `face_fraction` multiplies |
 | `CutCellMethods.is_cell_open(cell)`, `is_cell_open(cache, ci)` | connectivity, **not** `kind`; the cache form reads `face_fractions` alone, so it sees in-place edits |

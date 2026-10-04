@@ -108,12 +108,14 @@ end
         @test CutCellMethods.face_fractions(cache) === cache.cells.face_fraction
         @test CutCellMethods.volume_fractions(cache) === cache.cells.volume_fraction
         @test CutCellMethods.kinds(cache) === cache.cells.kind
+        @test CutCellMethods.face_centroids_local(cache) === cache.cells.face_centroid_local
         # Adapting gives the results alone, which read the same way.
         view = Adapt.adapt(Array, cache)
         @test view isa TriClippingCutCellView
         @test CutCellMethods.face_fractions(view) == cache.cells.face_fraction
         @test CutCellMethods.volume_fractions(view) == cache.cells.volume_fraction
         @test CutCellMethods.kinds(view) == cache.cells.kind
+        @test CutCellMethods.face_centroids_local(view) == cache.cells.face_centroid_local
         @test_throws ArgumentError allocate_cache(CartesianGrid(SVector(0.0, 0.0), (4, 4), SVector(0.1, 0.1)), TCC)
     end
 

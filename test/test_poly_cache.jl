@@ -147,6 +147,7 @@ mesh_lines(mesh) = [SVector{2,Int32}(e.con) for e in mesh.elements]
         @test CutCellMethods.face_fractions(cache) === cache.cells.face_fraction
         @test CutCellMethods.volume_fractions(cache) === cache.cells.volume_fraction
         @test CutCellMethods.kinds(cache) === cache.cells.kind
+        @test CutCellMethods.face_centroids_local(cache) === cache.cells.face_centroid_local
     end
 
     @testset "$name" for (name, loops) in PC_BODIES
