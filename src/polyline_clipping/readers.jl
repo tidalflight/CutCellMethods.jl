@@ -30,9 +30,14 @@ function regions(cache::PolylineClippingCutCellCache, ci::CartesianIndex{2})
 end
 
 # The cut slot a cell had in the last update, 0 if none.
-function _pl_slot_of(cache::PolylineClippingCutCellCache, ci::CartesianIndex{2})
-    s = Int(cache.info[ci].slot)
-    return s > 0 && s <= length(cache.work.cross.cut_list) && cache.work.cross.cut_list[s] == ci ? s : 0
+_pl_slot_of(cache::PolylineClippingCutCellCache, ci::CartesianIndex{2}) =
+    _pl_slot_of(cache.info.slot, cache.work.cross.cut_list, ci)
+
+# The same from the `slot` column itself, so a host copy can stand in for a device cache's
+# (`interface_mesh`).
+function _pl_slot_of(slot::AbstractMatrix, cut_list::AbstractVector, ci::CartesianIndex{2})
+    s = Int(slot[ci])
+    return s > 0 && s <= length(cut_list) && cut_list[s] == ci ? s : 0
 end
 
 """

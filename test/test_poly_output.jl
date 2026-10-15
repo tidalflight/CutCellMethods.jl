@@ -129,6 +129,11 @@ po_shoelace(p) =sum(i -> (p[i][1] * p[mod1(i + 1, length(p))][2] - p[i][2] * p[m
                 # areas may differ by the device's fused multiply-adds
                 @test maximum(abs.(dc.volume_fraction .- host.cells.volume_fraction)) < 64 * eps(T)
                 @test length(dev.regions) == length(host.regions)
+                # The walls draw off a device cache as off the host's: `interface_mesh` copies what it
+                # reads, the closed slivers' neighbour slots included (the square on nodes)
+                dw, hw = generate_mesh(dev, g), generate_mesh(host, g)
+                @test [e.con for e in dw.elements] == [e.con for e in hw.elements]
+                @test maximum(p -> maximum(abs, p), dw.nodes.coord .- hw.nodes.coord) < 64 * eps(T)
                 # A device kernel takes the cache, directly or inside a consumer's struct: the launch
                 # adapts it to its view.
                 be = Main.CUDABackend()

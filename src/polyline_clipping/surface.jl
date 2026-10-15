@@ -84,6 +84,7 @@ function interface_mesh(cache::PolylineClippingCutCellCache{T}, grid::CartesianG
     g = _pl_check_grid(cache, grid)
     bsegs = Adapt.adapt(Array, cache.bsegs)
     arcs = Adapt.adapt(Array, cache.arcs)
+    slot = Adapt.adapt(Array, cache.info.slot) # read per neighbour below; on a device cache, a scalar index
     C = w.cross
     function push_line!(a, b, ci, r, lp)
         push!(X, a, b)
@@ -111,7 +112,7 @@ function interface_mesh(cache::PolylineClippingCutCellCache{T}, grid::CartesianG
                 # this cell's sliver, closed onto a neighbour; drawn from here only when the
                 # neighbour has no arcs of its own to draw it from (it was uncut)
                 nb = ci + _pl_dir_offset(Int(a.dir))
-                _pl_slot_of(cache, nb) == 0 &&
+                _pl_slot_of(slot, C.cut_list, nb) == 0 &&
                     push_line!(_pl_wall_ends(g, nb, _pl_opposite(Int(a.dir)), a.s0, a.s1)..., nb,
                                a.nbr_region, Int32(0))
             end
